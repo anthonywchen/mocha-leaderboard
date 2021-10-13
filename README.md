@@ -14,5 +14,11 @@ You will also need to pull the MOCHA repository [here](https://github.com/anthon
 
 ### Evaluation
 
+### Docker
 
-### Data
+You can use `docker` to build and run the code, like so:
+
+```bash
+docker run --rm -it -v (pwd)/results:/results (docker build -q .)
+```
+

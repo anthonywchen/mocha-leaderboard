@@ -1,0 +1,4 @@
+{"id": "1", "metadata": {"dataset": "dataset1"}, "context": "Remy took their laptop everywhere, but eventually forgot it on a bus.", "question": "What does Remy need to do before this?"}
+{"id": "2", "metadata": {"dataset": "dataset2"}, "context": "In the meanwhile, Jane has been kidnapped by the criminal Arab and wonders what is keeping her husband from once again coming to her rescue.", "question": "Who kidnapped Jane?"}
+{"id": "3", "metadata": {"dataset": "dataset3"}, "context": "I was going for a long drive, so I knew my car would need more fuel than it already had. I pulled into the station and checked the dash to be sure I knew what side the tank was on before I parked next to one of the pumps.", "question": "Where did they fuel the car?"}
+{"id": "4", "metadata": {"dataset": "dataset1"}, "context": "Quinn had been drinking, so Austin grabbed Quinn's car keys", "question": "What will Austin want to do next?"}

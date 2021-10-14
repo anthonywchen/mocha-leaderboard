@@ -1,0 +1,31 @@
+version: v2-alpha
+description: Runs the Mocha Evaluator
+tasks:
+  - image:
+      beaker: sams/mocha-eval
+    command: [
+        "python",
+        "evaluator/evaluate.py",
+        "-q", "/input/questions.jsonl",
+        "-a", "/input/answers.jsonl",
+        "-p", "/input/predictions.jsonl",
+        "-m", "/results/metrics.jsonl"
+      ]
+    datasets:
+      - mountPath: /input/answers.jsonl
+        subPath: test_answers.jsonl
+        source:
+          beaker: sams/mocha-dummy-answers
+      - mountPath: /input/questions.jsonl
+        subPath: test_questions.jsonl
+        source:
+          beaker: sams/mocha-dummy-questions
+      - mountPath: /input/predictions.jsonl
+        subPath: test_predictions.jsonl
+        source:
+          beaker: sams/mocha-dummy-predictions
+    result:
+      path: /results
+    context:
+      cluster: ai2/on-prem-aristo
+      priority: normal

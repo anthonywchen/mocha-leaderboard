@@ -1,0 +1,145 @@
+# Optional: Whether to allow users to see the test / blind scores of their
+# submissions prior to publishing results. This should only be enabled
+# if you're not concerned about overfitting. Defaults to false.
+show_unpublished_scores: false
+
+# Optional: If true, then the 7-day publishing "speed bump" is disabled,
+# allowing successful submissions to be published without delay.
+#
+# This can be enabled temporarily to backfill a leaderboard with established
+# results before making it public, and disabled after backfilling is complete.
+#
+# Enabling this for public Leaderboards is possible, making it easier
+# to publish results. Please note that it makes overfitting a model to
+# the blind labels easy. So if you enable this for your leaderboard, either
+# trust your submitters, or pay attention to incoming submissions to recognize
+# people gaming the system.
+disable_publish_speed_bump: false
+
+# Required: The configuration for reading results from the evaluator
+evaluator:
+  # Required: The metrics we expect to be generated. Your evaluator can return
+  # several metrics, and must have at least one. If your evaluator produces metrics
+  # not listed here, they will be ignored without causing problems.
+  metrics:
+      # Required: A unique identifier for the metric.
+    - key: avg_lerc
+      # Required: The name to be displayed in the UI for the metric.
+      display_name: "Average LERC Score"
+      description: "LERC Score averaged across all instances across all datasets."
+    - key: cosmosqa_lerc
+      display_name: "CosmosQA LERC Score"
+      description: "LERC Score on CosmosQA instances."
+    - key: mcscript_lerc
+      display_name: "MCScript LERC Score"
+      description: "LERC Score on MCScript instances."
+    - key: narrativeqa_lerc
+      display_name: "NarrativeQA LERC Score"
+      description: "LERC Score on NarrativeQA instances."
+    - key: socialiqa_lerc
+      display_name: "SocialIQA LERC Score"
+      description: "LERC Score on SocialIQA instances."
+
+# Required: A description of the table of scores to show.
+metrics_table:
+
+  # Required: A list of columns to display.
+  columns:
+      # Required: Column name that is displayed on the page.
+    - name: Average LERC Score
+      description: LERC Score averaged across all instances across all datasets.
+      renderer: "simple"
+      metric_keys: ["avg_lerc"]
+    - name: CosmosQA LERC Score
+      description: LERC Score on CosmosQA instances.
+      renderer: "simple"
+      metric_keys: ["cosmosqa_lerc"]
+    - name: MCScript LERC Score
+      description: LERC Score on MCScript instances.
+      renderer: "simple"
+      metric_keys: ["mcscript_lerc"]
+    - name: NarrativeQA LERC Score
+      description: LERC Score on NarrativeQA instances.
+      renderer: "simple"
+      metric_keys: ["narrativeqa_lerc"]
+    - name: SocialIQA LERC Score
+      description: LERC Score on SocialIQA instances.
+      renderer: "simple"
+      metric_keys: ["socialiqa_lerc"]
+
+# Required: Information that impacts the display of your leaderboard in the UI
+metadata:
+  # Optional: The groups your leaderboard belongs to. Valid ids are "darpa" and
+  # "ai2". If you don't enter a value here, the leaderboard won't be displayed
+  # anywhere in the UI.
+  tag_ids:
+    - ai2
+
+  # Required: The logo for your leaderboard. It should reside in the file
+  # ui/src/assets/images/leaderboard/ID/logo.svg where ID is the identifier of
+  # this board. To create a logo, contact the ReViz team: reviz@allenai.org.
+  logo: /assets/images/leaderboard/mocha/logo.svg
+
+  # Required: An abbreviation identifying your leaderboard.
+  #
+  # Please think of an interesting name. For example, YRLDRBRD or XGQCCTvN are
+  # bad names because they're not pronouncible nor memorable , while something
+  # like QASC or ARC or DROP are better.
+  short_name: MOCHA-QA
+
+  # Required: The fully qualified leaderboard name.
+  long_name: ""
+
+  # Required: A paragraph describing your leaderboard. Markdown is not
+  # supported in this field.
+  description: >
+    A longer description of your leaderboard. This is text-only, markdown is
+    not supported.
+
+  # Required: An example question from your leaderboard. This field supports
+  # markdown.
+  example: |
+    Why did my model cross the road?
+    * (A) Because it's shoes were over fit, and it needed new ones
+    * (B) Because it's input parameters weren't quite right
+    * (C) I don't understand this poor attempt at humor
+
+  # Required: Instructions for getting the datasets associated with your
+  # leaderboard.  This field supports markdown.
+  getting_the_data: |
+    You can get data [here](https://yourldrbrd.apps.allenai.org/dataset.tar.gz)
+
+  # Required: An explanation of how scores are calculated. This field supports
+  # markdown.
+  scoring: |
+    We pick the answer we like the most. If your model chooses an answer we
+    like, you'll win. If not, bummer!
+
+  # Required: An explanation of what user submissions should look like. This
+  # field supports markdown.
+  predictions_format: |
+    Your predictions should be output as CSV in a single file, with a row per
+    prediction, like so:
+      ```
+      1,(A),0.93
+      1,(B),0.7
+      3,(C),0.8
+      ```
+
+  # Required: A freeform list of example models. Markdown is supported in this field.
+  example_models: |
+      Check out the models [here](https://github.com/allenai/yourldrbrd).
+
+  # Required: Metadata about the affiliated team at AI2
+  team:
+    # Required: The team's name
+    name: Your Team Name
+    # Optional: A short paragraph describing the team.
+    description:
+      Project Your Team Name, is focused on identifying techniques for
+      predicting good team names. You can find out more
+      [here](https://allenai.org/]).
+  # Required: A short description of your leaderboard's purpose. This field
+  # supports markdown.
+  purpose:
+    To help all of us choose better team names, because **they're** very important.

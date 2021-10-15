@@ -6,6 +6,7 @@ from typing import List
 sys.path.append('MOCHA/')
 
 import jsonlines
+import tqdm
 from allennlp.predictors.predictor import Predictor
 
 from lerc.lerc_predictor import LERCPredictor
@@ -56,7 +57,7 @@ def calculate_metrics(
     # Stores scores for different splits of the data
     metrics = collections.defaultdict(list)
 
-    for query_id in questions:
+    for query_id in tqdm.tqdm(questions):
         if query_id not in answers:
             raise ValueError(f"Entry in answer file not found for query {query_id}")
 

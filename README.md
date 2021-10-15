@@ -14,15 +14,13 @@ You will also need to pull the MOCHA repository [here](https://github.com/anthon
 
 ### Evaluation
 
-We use AI2's [Beaker](https://beaker.org) for running the evaluator. This
-requires three things:
+We use AI2's [Beaker](https://beaker.org) for running the evaluator. This requires three things:
 
 1. A Beaker Image, which captures the code for the evaluator.
 2. 3 datasets, each of which is a single `.jsonl` file:
     1. The questions
     2. The answers
     3. The predictions
-
 
 There are instructions for creating each below.
 

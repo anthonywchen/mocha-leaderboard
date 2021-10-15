@@ -42,11 +42,13 @@ def calculate_metrics(
     questions_file: str,
     answers_file: str,
     predictions_file: str,
-    metrics_file: str
+    metrics_file: str,
+    device: int = -1
 ) -> None:
     lerc_metric = Predictor.from_path(
         "https://storage.googleapis.com/allennlp-public-models/lerc-2020-11-18.tar.gz",
-        "lerc"
+        "lerc",
+        cuda_device=device
     )
     questions = {d['id']: d for d in jsonlines.open(questions_file)}
     answers = {d['id']: d for d in jsonlines.open(answers_file)}
@@ -113,12 +115,19 @@ def main():
         help="JSON file which the metrics of the predictions are writtent to.",
         required=True
     )
+    parser.add_argument(
+        "-d", "--device",
+        help="Device to run evaluation script on. Default is to run on CPU.",
+        type=int,
+        default=-1
+    )
     args = parser.parse_args()
     calculate_metrics(
         args.questions_file,
         args.answers_file,
         args.predictions_file,
-        args.metrics_file
+        args.metrics_file,
+        args.device
     )
 
 

@@ -88,21 +88,24 @@ metadata:
   short_name: MOCHA-QA
 
   # Required: The fully qualified leaderboard name.
-  long_name: ""
+  long_name: "MOCHA Question Answering Leaderboard"
 
   # Required: A paragraph describing your leaderboard. Markdown is not
   # supported in this field.
   description: >
-    A longer description of your leaderboard. This is text-only, markdown is
-    not supported.
+    This leaderboard is for evaluating generative question answering (QA) systems' predictions on a variety of generative QA datasets.
+    The primary evaluation metric is a metric that has been trained to do generative QA evaluation known as LERC (Learned Evaluation for Reading Comprehension).
+    The core datasets that we evaluate model predictions on are the four generative QA datasets that make up the MOCHA dataset.
+
+    Note: This leaderboard is not for evaluating QA metrics.
+    Rather, it uses the LERC metric that is trained on the MOCHA dataset to evaluate generative QA predictions.
 
   # Required: An example question from your leaderboard. This field supports
   # markdown.
   example: |
-    Why did my model cross the road?
-    * (A) Because it's shoes were over fit, and it needed new ones
-    * (B) Because it's input parameters weren't quite right
-    * (C) I don't understand this poor attempt at humor
+    Context: In the meanwhile, Jane has been kidnapped by the criminal Arab and wonders what is keeping her husband from once again coming to her rescue.
+    Question: Who kidnapped Jane?
+    Reference: The criminal Arab.
 
   # Required: Instructions for getting the datasets associated with your
   # leaderboard.  This field supports markdown.
@@ -112,19 +115,20 @@ metadata:
   # Required: An explanation of how scores are calculated. This field supports
   # markdown.
   scoring: |
-    We pick the answer we like the most. If your model chooses an answer we
-    like, you'll win. If not, bummer!
+    The scoring is uses a trained reading comprehension metric known as LERC.
+    To read more about how LERC was trained, see the paper describing it [here](https://arxiv.org/abs/2010.03636).
 
   # Required: An explanation of what user submissions should look like. This
   # field supports markdown.
   predictions_format: |
-    Your predictions should be output as CSV in a single file, with a row per
-    prediction, like so:
+    Your predictions should be stored in a JSONLines file where each line is a JSON object representing a prediction on QA instances.
+    Each JSON line must have two keys: an `id` key storing the question ID and a `candidate` key storing the model's prediction on the question.
       ```
-      1,(A),0.93
-      1,(B),0.7
-      3,(C),0.8
+      {"id": "59508f50c13003582a1357f8dff5fd8e", "candidate": "It was haunted, accusations of witchcraft, sudden deaths"}
+      {"id": "6a9d3d2e96448b7104401adeaf6269e2", "candidate": "Don't Henrique"}
+      ...
       ```
+    To see a predictions file with random predictions for the test set, see this file []().
 
   # Required: A freeform list of example models. Markdown is supported in this field.
   example_models: |

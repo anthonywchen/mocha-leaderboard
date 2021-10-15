@@ -75,16 +75,9 @@ metadata:
   tag_ids:
     - ai2
 
-  # Required: The logo for your leaderboard. It should reside in the file
-  # ui/src/assets/images/leaderboard/ID/logo.svg where ID is the identifier of
-  # this board. To create a logo, contact the ReViz team: reviz@allenai.org.
   logo: /assets/images/leaderboard/mocha/logo.svg
 
   # Required: An abbreviation identifying your leaderboard.
-  #
-  # Please think of an interesting name. For example, YRLDRBRD or XGQCCTvN are
-  # bad names because they're not pronouncible nor memorable , while something
-  # like QASC or ARC or DROP are better.
   short_name: MOCHA-QA
 
   # Required: The fully qualified leaderboard name.
@@ -138,11 +131,6 @@ metadata:
   team:
     # Required: The team's name
     name: Your Team Name
-    # Optional: A short paragraph describing the team.
-    description:
-      Project Your Team Name, is focused on identifying techniques for
-      predicting good team names. You can find out more
-      [here](https://allenai.org/]).
   # Required: A short description of your leaderboard's purpose. This field
   # supports markdown.
   purpose:

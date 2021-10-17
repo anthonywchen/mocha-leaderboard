@@ -2,7 +2,7 @@ import argparse
 import collections
 import json
 import sys
-from typing import List
+from typing import Dict
 sys.path.append('MOCHA/')
 
 import jsonlines
@@ -13,84 +13,47 @@ from lerc.lerc_predictor import LERCPredictor
 
 
 def get_lerc_scores(
-    lerc_metric: LERCPredictor,
-    contexts: List[str],
-    questions: List[str],
-    references: List[str],
-    candidates: List[str]
-) -> List[float]:
-    assert len(contexts) == len(questions) == len(references) == len(candidates)
-    batch_inputs = [
-        {
-            'context': contexts[i],
-            'question': questions[i],
-            'reference': references[i],
-            'candidate': candidates[i]
-        }
-        for i in range(len(contexts))
-    ]
-    output_dicts = lerc_metric.predict_batch_json(batch_inputs)
-    lerc_scores = [d['pred_score'] for d in output_dicts]
-
-    # LERC is a regression model that returns a score (generally) between 1 and 5.
-    # Squash the range to be between 0 and 1.
-    lerc_scores = [min(1, max(0, (score-1)/4)) for score in lerc_scores]
-
-    return lerc_scores
-
-
-def calculate_metrics(
-    questions_file: str,
-    answers_file: str,
-    predictions_file: str,
-    metrics_file: str,
+    questions: Dict[str, dict],
+    answers: Dict[str, dict],
+    predictions: Dict[str, dict],
     batch_size: int = 32,
     device: int = -1
-) -> None:
+) -> Dict[str, float]:
     lerc_metric = Predictor.from_path(
         "https://storage.googleapis.com/allennlp-public-models/lerc-2020-11-18.tar.gz",
         "lerc",
         cuda_device=device
     )
-    questions = {d['id']: d for d in jsonlines.open(questions_file)}
-    answers = {d['id']: d for d in jsonlines.open(answers_file)}
-    predictions = {d['id']: d for d in jsonlines.open(predictions_file)}
 
     # Get scores for each reference for each query ID
     raw_metrics = collections.defaultdict(list)
+
     all_query_ids = list(questions.keys())
     for i in tqdm.tqdm(range(0, len(all_query_ids), batch_size)):
         batch_query_ids = []
-        batch_contexts = []
-        batch_questions = []
-        batch_candidates = []
-        batch_references = []
+        batch_inputs = []
 
         # Construct batch inputs
         for query_id in all_query_ids[i:i+batch_size]:
-            if query_id not in answers:
-                raise ValueError(f"Entry in answer file not found for query {query_id}")
-            elif query_id not in predictions:
+            if query_id not in predictions:
                 continue
-
-            context = questions[query_id]['context']
-            question = questions[query_id]['question']
-            candidate = predictions[query_id]['candidate']
 
             for reference in answers[query_id]['references']:
                 batch_query_ids.append(query_id)
-                batch_contexts.append(context)
-                batch_questions.append(question)
-                batch_references.append(reference)
-                batch_candidates.append(candidate)
+                batch_inputs.append({
+                    'context': questions[query_id]['context'],
+                    'question': questions[query_id]['question'],
+                    'reference': reference,
+                    'candidate': predictions[query_id]['candidate']
+                })
 
-        lerc_scores = get_lerc_scores(
-            lerc_metric,
-            batch_contexts,
-            batch_questions,
-            batch_references,
-            batch_candidates
-        )
+        # Compute LERC scores for the batch
+        output_dicts = lerc_metric.predict_batch_json(batch_inputs)
+        lerc_scores = [d['pred_score'] for d in output_dicts]
+
+        # LERC is a regression model that returns a score (generally) between 1 and 5.
+        # Squash the range to be between 0 and 1.
+        lerc_scores = [min(1, max(0, (score - 1) / 4)) for score in lerc_scores]
 
         # Keep track of all scores for all references for each query
         for query_id, score in zip(batch_query_ids, lerc_scores):
@@ -106,6 +69,31 @@ def calculate_metrics(
     # Compute average LERC score per dataset as well as macro-averaged LERC score
     metrics = {metric: sum(v)/len(v) for metric, v in metrics.items()}
     metrics['avg_lerc'] = sum(metrics.values())/len(metrics.values())
+    return metrics
+
+
+def calculate_metrics(
+    questions_file: str,
+    answers_file: str,
+    predictions_file: str,
+    metrics_file: str,
+    batch_size: int = 32,
+    device: int = -1
+) -> None:
+    questions = {d['id']: d for d in jsonlines.open(questions_file)}
+    answers = {d['id']: d for d in jsonlines.open(answers_file)}
+    predictions = {d['id']: d for d in jsonlines.open(predictions_file)}
+
+    # Run check on data
+    for query_id in questions:
+        if query_id not in answers:
+            raise ValueError(f"Entry in answer file not found for query {query_id}")
+        elif query_id not in predictions:
+            print(f"Missing prediction for query {query_id}. Assigning a score of 0.")
+
+    # Compute metric scores for each metric
+    metrics = {}
+    metrics.update(get_lerc_scores(questions, answers, predictions, batch_size, device))
 
     # Write the metric scores to file
     with open(metrics_file, "w") as f:
@@ -139,13 +127,13 @@ def main():
     )
     parser.add_argument(
         "-b", "--batch_size",
-        help="Batch size to do evaluation with. Default is 32.",
+        help="Batch size to do LERC evaluation with. Default is 32.",
         type=int,
         default=32
     )
     parser.add_argument(
         "-d", "--device",
-        help="Device to run evaluation script on. Default is to run on CPU.",
+        help="Device to run LERC evaluation on. Default is to run on CPU.",
         type=int,
         default=-1
     )

@@ -1,6 +1,6 @@
 {
-    "avg_lerc": 0.3324793055653572,
     "dataset1_lerc": 0.1442449390888214,
     "dataset2_lerc": 0.04142734408378601,
-    "dataset3_lerc": 1.0
+    "dataset3_lerc": 1.0,
+    "avg_lerc": 0.39522409439086914
 }

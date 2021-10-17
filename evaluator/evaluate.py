@@ -12,6 +12,24 @@ from allennlp.predictors.predictor import Predictor
 from lerc.lerc_predictor import LERCPredictor
 
 
+def aggregate_raw_metrics(
+    questions: Dict[str, dict],
+    raw_metrics: Dict[str, float],
+    metric_name: str
+) -> Dict[str, float]:
+    # Bin the raw scores for the queries by dataset
+    metrics = collections.defaultdict(list)
+    for query_id in questions:
+        dataset = questions[query_id]['metadata']['dataset']
+        score = raw_metrics.get(query_id, 0)
+        metrics[f"{dataset}_{metric_name}"].append(score)
+
+    # Compute average metric score per dataset as well as macro-averaged LERC score
+    metrics = {dataset: sum(v)/len(v) for dataset, v in metrics.items()}
+    metrics[f"avg_{metric_name}"] = sum(metrics.values())/len(metrics.values())
+    return metrics
+
+
 def get_lerc_scores(
     questions: Dict[str, dict],
     answers: Dict[str, dict],
@@ -59,16 +77,10 @@ def get_lerc_scores(
         for query_id, score in zip(batch_query_ids, lerc_scores):
             raw_metrics[query_id].append(score)
 
-    # Bin the LERC score by dataset
-    metrics = collections.defaultdict(list)
-    for query_id in questions:
-        lerc_score = 0 if query_id not in raw_metrics else max(raw_metrics[query_id])
-        dataset = questions[query_id]['metadata']['dataset']
-        metrics[f"{dataset}_lerc"].append(lerc_score)
+    # Take the max score over all references for each query
+    raw_metrics = {query_id: max(raw_metrics[query_id]) for query_id in raw_metrics}
 
-    # Compute average LERC score per dataset as well as macro-averaged LERC score
-    metrics = {metric: sum(v)/len(v) for metric, v in metrics.items()}
-    metrics['avg_lerc'] = sum(metrics.values())/len(metrics.values())
+    metrics = aggregate_raw_metrics(questions, raw_metrics, "lerc")
     return metrics
 
 
@@ -138,6 +150,7 @@ def main():
         default=-1
     )
     args = parser.parse_args()
+
     calculate_metrics(
         args.questions_file,
         args.answers_file,

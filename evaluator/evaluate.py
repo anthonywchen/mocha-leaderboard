@@ -45,7 +45,6 @@ def calculate_metrics(
     predictions_file: str,
     metrics_file: str,
     batch_size: int = 32,
-    max_length: int = 512,
     device: int = -1
 ) -> None:
     lerc_metric = Predictor.from_path(
@@ -53,7 +52,6 @@ def calculate_metrics(
         "lerc",
         cuda_device=device
     )
-    lerc_metric._dataset_reader.max_length = max_length
     questions = {d['id']: d for d in jsonlines.open(questions_file)}
     answers = {d['id']: d for d in jsonlines.open(answers_file)}
     predictions = {d['id']: d for d in jsonlines.open(predictions_file)}
@@ -98,19 +96,16 @@ def calculate_metrics(
         for query_id, score in zip(batch_query_ids, lerc_scores):
             raw_metrics[query_id].append(score)
 
-    # Compute overall metric scores as well as per-dataset score
+    # Bin the LERC score by dataset
     metrics = collections.defaultdict(list)
     for query_id in questions:
         lerc_score = 0 if query_id not in raw_metrics else max(raw_metrics[query_id])
+        dataset = questions[query_id]['metadata']['dataset']
+        metrics[f"{dataset}_lerc"].append(lerc_score)
 
-        metrics['avg_lerc'].append(lerc_score)
-
-        # If there is a dataset key, we also compute per-dataset metrics
-        if 'dataset' in questions[query_id]['metadata']:
-            dataset = questions[query_id]['metadata']['dataset']
-            metrics[f"{dataset}_lerc"].append(lerc_score)
-
+    # Compute average LERC score per dataset as well as macro-averaged LERC score
     metrics = {metric: sum(v)/len(v) for metric, v in metrics.items()}
+    metrics['avg_lerc'] = sum(metrics.values())/len(metrics.values())
 
     # Write the metric scores to file
     with open(metrics_file, "w") as f:
@@ -149,12 +144,6 @@ def main():
         default=32
     )
     parser.add_argument(
-        "--max_length",
-        help="Max length of total input to LERC metric. Default is 512.",
-        type=int,
-        default=512
-    )
-    parser.add_argument(
         "-d", "--device",
         help="Device to run evaluation script on. Default is to run on CPU.",
         type=int,
@@ -167,7 +156,6 @@ def main():
         args.predictions_file,
         args.metrics_file,
         args.batch_size,
-        args.max_length,
         args.device
     )
 

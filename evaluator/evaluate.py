@@ -5,9 +5,11 @@ import sys
 from typing import Dict
 sys.path.append('MOCHA/')
 
+import datasets
 import jsonlines
 import tqdm
 from allennlp.predictors.predictor import Predictor
+from nltk import word_tokenize as tokenize
 
 from lerc.lerc_predictor import LERCPredictor
 
@@ -47,7 +49,7 @@ def get_lerc_scores(
     raw_metrics = collections.defaultdict(list)
 
     all_query_ids = list(questions.keys())
-    for i in tqdm.tqdm(range(0, len(all_query_ids), batch_size)):
+    for i in tqdm.tqdm(range(0, len(all_query_ids), batch_size), desc="LERC"):
         batch_query_ids = []
         batch_inputs = []
 
@@ -84,6 +86,54 @@ def get_lerc_scores(
     return metrics
 
 
+def get_bleu_scores(
+    questions: Dict[str, dict],
+    answers: Dict[str, dict],
+    predictions: Dict[str, dict],
+) -> Dict[str, float]:
+    bleu_metric = datasets.load_metric("bleu")
+    raw_metrics = {}
+    for query_id in tqdm.tqdm(list(questions.keys()), desc="BLEU"):
+        if query_id not in predictions:
+            continue
+
+        # Tokenize and lower-case before computing BLEU-1 metric.
+        candidate = [tokenize(predictions[query_id]['candidate'].lower())]
+        references = [[tokenize(r.lower()) for r in answers[query_id]['references']]]
+        output_dict = bleu_metric.compute(
+            predictions=candidate,
+            references=references,
+            max_order=1
+        )
+        raw_metrics[query_id] = output_dict['bleu']
+
+    metrics = aggregate_raw_metrics(questions, raw_metrics, "bleu1")
+    return metrics
+
+
+def get_meteor_scores(
+    questions: Dict[str, dict],
+    answers: Dict[str, dict],
+    predictions: Dict[str, dict],
+) -> Dict[str, float]:
+    meteor_metric = datasets.load_metric("meteor")
+    raw_metrics = {}
+    for query_id in tqdm.tqdm(list(questions.keys()), desc="METEOR"):
+        if query_id not in predictions:
+            continue
+
+        # Get METEOR score for each reference and take max
+        candidate = [predictions[query_id]['candidate']]
+        meteor_scores = [
+            meteor_metric.compute(predictions=candidate, references=[ref])['meteor']
+            for ref in answers[query_id]['references']
+        ]
+        raw_metrics[query_id] = max(meteor_scores)
+
+    metrics = aggregate_raw_metrics(questions, raw_metrics, "meteor")
+    return metrics
+
+
 def calculate_metrics(
     questions_file: str,
     answers_file: str,
@@ -96,18 +146,17 @@ def calculate_metrics(
     answers = {d['id']: d for d in jsonlines.open(answers_file)}
     predictions = {d['id']: d for d in jsonlines.open(predictions_file)}
 
-    # Run check on data
     for query_id in questions:
         if query_id not in answers:
             raise ValueError(f"Entry in answer file not found for query {query_id}")
         elif query_id not in predictions:
             print(f"Missing prediction for query {query_id}. Assigning a score of 0.")
 
-    # Compute metric scores for each metric
     metrics = {}
     metrics.update(get_lerc_scores(questions, answers, predictions, batch_size, device))
+    metrics.update(get_bleu_scores(questions, answers, predictions))
+    metrics.update(get_meteor_scores(questions, answers, predictions))
 
-    # Write the metric scores to file
     with open(metrics_file, "w") as f:
         f.write(json.dumps(metrics, indent=4))
 

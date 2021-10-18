@@ -2,5 +2,13 @@
     "dataset1_lerc": 0.1442449390888214,
     "dataset2_lerc": 0.04142734408378601,
     "dataset3_lerc": 1.0,
-    "avg_lerc": 0.39522409439086914
+    "avg_lerc": 0.39522409439086914,
+    "dataset1_bleu1": 0.0818730753077982,
+    "dataset2_bleu1": 0.47768754038252614,
+    "dataset3_bleu1": 1.0,
+    "avg_bleu1": 0.5198535385634414,
+    "dataset1_meteor": 0.0847457627118644,
+    "dataset2_meteor": 0.25641025641025644,
+    "dataset3_meteor": 0.9814814814814815,
+    "avg_meteor": 0.4408791668678675
 }

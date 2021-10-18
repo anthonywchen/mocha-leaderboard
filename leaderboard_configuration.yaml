@@ -18,27 +18,53 @@ disable_publish_speed_bump: false
 
 # Required: The configuration for reading results from the evaluator
 evaluator:
-  # Required: The metrics we expect to be generated. Your evaluator can return
-  # several metrics, and must have at least one. If your evaluator produces metrics
-  # not listed here, they will be ignored without causing problems.
   metrics:
       # Required: A unique identifier for the metric.
     - key: avg_lerc
-      # Required: The name to be displayed in the UI for the metric.
-      display_name: "Average LERC Score"
-      description: "LERC Score averaged across all instances across all datasets."
+      display_name: "Avg. LERC"
+      description: "Macro-averaged LERC score across the constituent datasets."
+    - key: avg_bleu1
+      display_name: "Avg. BLEU-1"
+      description: "Macro-averaged BLEU-1 score across the constituent datasets."
+    - key: avg_meteor
+      display_name: "Avg. METEOR"
+      description: "Macro-averaged METEOR score across the constituent datasets."
     - key: cosmosqa_lerc
-      display_name: "CosmosQA LERC Score"
-      description: "LERC Score on CosmosQA instances."
+      display_name: "CosmosQA LERC"
+      description: "LERC score on CosmosQA instances."
+    - key: cosmosqa_bleu1
+      display_name: "CosmosQA BLEU-1"
+      description: "BLEU-1 score on CosmosQA instances."
+    - key: cosmosqa_meteor
+      display_name: "CosmosQA METEOR"
+      description: "METEOR score on CosmosQA instances."
     - key: mcscript_lerc
-      display_name: "MCScript LERC Score"
-      description: "LERC Score on MCScript instances."
+      display_name: "MCScript LERC"
+      description: "LERC score on MCScript instances."
+    - key: mcscript_bleu1
+      display_name: "MCScript BLEU-1"
+      description: "BLEU-1 score on MCScript instances."
+    - key: mcscript_meteor
+      display_name: "MCScript METEOR"
+      description: "METEOR score on MCScript instances."
     - key: narrativeqa_lerc
-      display_name: "NarrativeQA LERC Score"
-      description: "LERC Score on NarrativeQA instances."
+      display_name: "NarrativeQA LERC"
+      description: "LERC score on NarrativeQA instances."
+    - key: narrativeqa_bleu1
+      display_name: "NarrativeQA BLEU-1"
+      description: "BLEU-1 score on NarrativeQA instances."
+    - key: narrativeqa_meteor
+      display_name: "NarrativeQA METEOR"
+      description: "METEOR score on NarrativeQA instances."
     - key: socialiqa_lerc
-      display_name: "SocialIQA LERC Score"
-      description: "LERC Score on SocialIQA instances."
+      display_name: "SocialIQA LERC"
+      description: "LERC score on SocialIQA instances."
+    - key: socialiqa_bleu1
+      display_name: "SocialIQA BLEU-1"
+      description: "BLEU-1 score on SocialIQA instances."
+    - key: socialiqa_meteor
+      display_name: "SocialIQA METEOR"
+      description: "METEOR score on SocialIQA instances."
 
 # Required: A description of the table of scores to show.
 metrics_table:
@@ -46,26 +72,66 @@ metrics_table:
   # Required: A list of columns to display.
   columns:
       # Required: Column name that is displayed on the page.
-    - name: Average LERC Score
-      description: LERC Score averaged across all instances across all datasets.
+    - name: Avg. LERC
+      description: Macro-averaged LERC score across the constituent datasets.
       renderer: "simple"
       metric_keys: ["avg_lerc"]
-    - name: CosmosQA LERC Score
-      description: LERC Score on CosmosQA instances.
+    - name: Avg. BLEU-1
+      description: Macro-averaged BLEU-1 score across the constituent datasets.
+      renderer: "simple"
+      metric_keys: ["avg_bleu1"]
+    - name: Avg. METEOR
+      description: Macro-averaged METEOR score across the constituent datasets.
+      renderer: "simple"
+      metric_keys: ["avg_meteor"]
+    - name: CosmosQA LERC
+      description: LERC score on CosmosQA instances.
       renderer: "simple"
       metric_keys: ["cosmosqa_lerc"]
-    - name: MCScript LERC Score
-      description: LERC Score on MCScript instances.
+    - name: CosmosQA BLEU-1
+      description: BLEU-1 score on CosmosQA instances.
+      renderer: "simple"
+      metric_keys: ["cosmosqa_bleu1"]
+    - name: CosmosQA METEOR
+      description: METEOR score on CosmosQA instances.
+      renderer: "simple"
+      metric_keys: ["cosmosqa_meteor"]
+    - name: MCScript LERC
+      description: LERC score on MCScript instances.
       renderer: "simple"
       metric_keys: ["mcscript_lerc"]
-    - name: NarrativeQA LERC Score
-      description: LERC Score on NarrativeQA instances.
+    - name: MCScript BLEU-1
+      description: BLEU-1 score on MCScript instances.
+      renderer: "simple"
+      metric_keys: ["mcscript_bleu1"]
+    - name: MCScript METEOR
+      description: METEOR score on MCScript instances.
+      renderer: "simple"
+      metric_keys: ["mcscript_meteor"]
+    - name: NarrativeQA LERC
+      description: LERC score on NarrativeQA instances.
       renderer: "simple"
       metric_keys: ["narrativeqa_lerc"]
-    - name: SocialIQA LERC Score
-      description: LERC Score on SocialIQA instances.
+    - name: NarrativeQA BLEU-1
+      description: BLEU-1 score on NarrativeQA instances.
+      renderer: "simple"
+      metric_keys: ["narrativeqa_bleu1"]
+    - name: NarrativeQA METEOR
+      description: METEOR score on NarrativeQA instances.
+      renderer: "simple"
+      metric_keys: ["narrativeqa_meteor"]
+    - name: SocialIQA LERC
+      description: LERC score on SocialIQA instances.
       renderer: "simple"
       metric_keys: ["socialiqa_lerc"]
+    - name: SocialIQA BLEU-1
+      description: BLEU-1 score on SocialIQA instances.
+      renderer: "simple"
+      metric_keys: ["socialiqa_bleu1"]
+    - name: SocialIQA METEOR
+      description: METEOR score on SocialIQA instances.
+      renderer: "simple"
+      metric_keys: ["socialiqa_meteor"]
 
 # Required: Information that impacts the display of your leaderboard in the UI
 metadata:
@@ -86,30 +152,38 @@ metadata:
   # Required: A paragraph describing your leaderboard. Markdown is not
   # supported in this field.
   description: >
-    This leaderboard is for evaluating generative question answering (QA) systems' predictions on a variety of generative QA datasets.
-    The primary evaluation metric is a metric that has been trained to do generative QA evaluation known as LERC (Learned Evaluation for Reading Comprehension).
+    Tired of multiple-choice and span-selection QA datasets and want to try your hand at generative QA but don't have faith in the metrics?
+    Try out our generative QA leaderboard which uses a trained metric known as LERC (Learned Evaluation for Reading Comprehension)!
     The core datasets that we evaluate model predictions on are the four generative QA datasets that make up the MOCHA dataset.
-
-    Note: This leaderboard is not for evaluating QA metrics.
-    Rather, it uses the LERC metric that is trained on the MOCHA dataset to evaluate generative QA predictions.
+    We provide validation and test data; what you train on is up to you!
 
   # Required: An example question from your leaderboard. This field supports
   # markdown.
   example: |
-    Context: In the meanwhile, Jane has been kidnapped by the criminal Arab and wonders what is keeping her husband from once again coming to her rescue.
-    Question: Who kidnapped Jane?
-    Reference: The criminal Arab.
+    **Context**: In the meanwhile, Jane has been kidnapped by the criminal Arab and wonders what is keeping her husband from once again coming to her rescue.
+
+    **Question**: Who kidnapped Jane?
+
+    **Reference**: The criminal Arab.
 
   # Required: Instructions for getting the datasets associated with your
   # leaderboard.  This field supports markdown.
   getting_the_data: |
-    You can get data [here](https://yourldrbrd.apps.allenai.org/dataset.tar.gz)
+    Once your model is trained, we provide a [validation set](https://github.com/anthonywchen/mocha-leaderboard/tree/master/data)
+    and the [evaluation script](https://github.com/anthonywchen/mocha-leaderboard/blob/master/evaluator/evaluate.py)
+    used in this leaderboard for you to evaluate your model.
+    Read [this](https://github.com/anthonywchen/mocha-leaderboard/blob/master/evaluator/README.md) to learn about the structure of the data files and how to run the evaluation script.
+
+    When you are ready, make predictions on the [test questions](https://github.com/anthonywchen/mocha-leaderboard/blob/master/data/test_questions.jsonl) and submit the predictions here.
 
   # Required: An explanation of how scores are calculated. This field supports
   # markdown.
   scoring: |
-    The scoring is uses a trained reading comprehension metric known as LERC.
-    To read more about how LERC was trained, see the paper describing it [here](https://arxiv.org/abs/2010.03636).
+    Scoring is done via our [evaluation script](https://github.com/anthonywchen/mocha-leaderboard/blob/master/evaluator/evaluate.py).
+    The main metric used to do scoring is a trained reading comprehension metric known as LERC.
+    To read more about how LERC was trained, see our [EMNLP 2020](https://arxiv.org/abs/2010.03636) paper.
+    We also score submissions using the BLEU-1 metric and the METEOR metric.
+    Of the three metrics, LERC has been shown to assign scores more faithful to human judgements.
 
   # Required: An explanation of what user submissions should look like. This
   # field supports markdown.
@@ -121,17 +195,17 @@ metadata:
       {"id": "6a9d3d2e96448b7104401adeaf6269e2", "candidate": "Don't Henrique"}
       ...
       ```
-    To see a predictions file with random predictions for the test set, see this file []().
+    To see a predictions file with random predictions for the test set, see [this file](https://github.com/anthonywchen/mocha-leaderboard/blob/master/data/random_test_predictions.jsonl).
 
   # Required: A freeform list of example models. Markdown is supported in this field.
-  example_models: |
-      Check out the models [here](https://github.com/allenai/yourldrbrd).
+#  example_models: |
+#      Check out the models [here](https://github.com/allenai/yourldrbrd).
 
   # Required: Metadata about the affiliated team at AI2
-  team:
+#  team:
     # Required: The team's name
-    name: Your Team Name
+#    name: Your Team Name
   # Required: A short description of your leaderboard's purpose. This field
   # supports markdown.
-  purpose:
-    To help all of us choose better team names, because **they're** very important.
+#  purpose:
+#    To help all of us choose better team names, because **they're** very important.

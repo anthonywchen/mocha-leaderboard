@@ -13,6 +13,7 @@ You will first need to install the packages in `requirements.txt`.
 You will also need to pull the MOCHA repository [here](https://github.com/anthonywchen/mocha) into the root of this repository.
 
 ### Evaluation
+Read more about the evaluation script used in the leaderboard as well as how to run the evaluation script on validation data [here](evaluator/).
 
 We use AI2's [Beaker](https://beaker.org) for running the evaluator. This requires three things:
 

@@ -7,11 +7,15 @@ sys.path.append('MOCHA/')
 
 import datasets
 import jsonlines
+import nltk
 import tqdm
 from allennlp.predictors.predictor import Predictor
 from nltk import word_tokenize as tokenize
 
 from lerc.lerc_predictor import LERCPredictor
+
+nltk.download('punkt')
+nltk.download('wordnet')
 
 
 def aggregate_raw_metrics(

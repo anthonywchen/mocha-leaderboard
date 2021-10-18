@@ -26,7 +26,7 @@ def aggregate_raw_metrics(
         score = raw_metrics.get(query_id, 0)
         metrics[f"{dataset}_{metric_name}"].append(score)
 
-    # Compute average metric score per dataset as well as macro-averaged LERC score
+    # Compute per dataset score as well as macro-averaged score over all datasets
     metrics = {dataset: sum(v)/len(v) for dataset, v in metrics.items()}
     metrics[f"avg_{metric_name}"] = sum(metrics.values())/len(metrics.values())
     return metrics
